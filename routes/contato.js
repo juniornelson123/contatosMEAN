@@ -1,5 +1,11 @@
 module.exports = function(app){
 	var contato = app.controllers.contato;
-	app.get("/contatos", contato.index);
-	app.get("/contatos/:id", contato.show);
+	console.log(contato)
+	app.route("/contatos")
+	.get(contato.index)
+	.post(contato.create);
+	
+	app.route("/contatos/:id")
+	.get(contato.show)
+	.delete(contato.delete);
 }
