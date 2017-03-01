@@ -1,35 +1,51 @@
-var	contatos = [
-	{_id: 1, nome: 'Contato Exemplo1',	email: 'cont1@empresa.com.br'},
-	{_id: 2, nome: 'Contato Exemplo2', email: 'cont2@empresa.com.br'},
-	{_id: 3, nome: 'Contato Exemplo3',	email: 'cont3@empresa.com.br'}
-];
-
-var	ID_CONTATO_INC = 3;
 
 module.exports = function(app){
+	var	Contato	=	app.models.contato;
 	var ContatoController = {
 		index: function(req, res){
-			res.json(contatos);
+			Contato.find().exec().then(function(contatos){
+				res.json(contatos);
+			}, function(erro){
+				console.log(erro);
+				res.status(500).json(error)
+			})
 		},
 		show: function(req, res){
-			var idContato = req.params.id
-			var contato = contatos.filter(function(contato){
-				return contato._id = idContato
-
-			})[0];
-			contato? res.json(contato) : res.status(400).send("Contato não encontrado")
+			var id = req.params.id
+			Contato.findById(id).exec().then(function(contato){
+				if	(!contato)	throw new Error("Contato não	encontrado");
+				res.json(contato)
+			}, function(erro){
+				res.status(404).json(erro)
+			})
+			
 		},
 		delete: function(req, res){
 			console.log(req.params)
-			contatos = contatos.filter(function(contato) {
-				return contato._id != req.params.id;
-			});
-			res.status(204).end();
+			var _id = req.params.id
+			Contato.remove({"_id": _id}).exec().then(function(){
+				res.status(204).json({info: "Cadastrado com sucesso"})
+			}, function(erro){
+				res.status(500).json({info: "Erro ao remover contato"})
+			})
 		},
 		create:	function(req, res) {
-			var	contato	=	req.body;
-			contato	=	contato._id	? atualiza(contato)	: adiciona(contato);
-			res.json(contato);
+			var	_id	= req.body._id;
+			if(_id){
+				Contato.findByIdAndUpdate(_id, req.body).exec().then(function(contato){
+					res.json(contato);
+				}, function(erro){
+					res.status(500).json(erro);
+				})
+
+			}else{
+				Contato.create(req.body).then(function(contato){
+					res.status(200).json(contato)
+				}, function(erro){
+					res.status(500).json(erro)
+
+				})
+			}
 		}
 
 

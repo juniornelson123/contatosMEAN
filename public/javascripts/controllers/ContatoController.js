@@ -1,4 +1,4 @@
-angular.module("contatooh").controller('ContatoController', function($scope, $routeParams, $resource){
+angular.module("contatooh").controller('ContatoController', function($scope, $routeParams, $resource, $location){
 	
 	var	Contato	= $resource('/contatos');
 	$scope.mensagem = {text: ''}
@@ -17,6 +17,11 @@ angular.module("contatooh").controller('ContatoController', function($scope, $ro
 
 		$scope.salva = function() {
 			console.log($scope.contato)
-			$scope.contato.$save()
+			$scope.contato.$save(function(){
+				$location.path('#!/contatos')
+			}, function(){
+
+			})
+
 		};
 })

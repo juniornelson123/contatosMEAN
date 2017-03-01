@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var app = express();
+require('./config/database.js')('mongodb://localhost/contatooh');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
