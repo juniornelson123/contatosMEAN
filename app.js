@@ -4,6 +4,9 @@ var load = require('express-load');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
+var session = require('express-session');
+var passport  = require('passport');
+
 var app = express();
 require('./config/database.js')('mongodb://localhost/contatooh');
 
@@ -17,13 +20,22 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride());
 app.use(cookieParser());
+app.use(session(
+  { secret: 'homem avestruz',  
+      resave: true, 
+      saveUninitialized:  true  
+  }
+));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 load('models')
-	.then('controllers')
-	.then('routes')
-	.into(app);
+  .then('controllers')
+  .then('routes')
+  .into(app);
 
+require('./config/passport.js')();
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

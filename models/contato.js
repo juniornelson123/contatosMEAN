@@ -13,6 +13,10 @@ module.exports = function(){
 				unique: true
 			}
 		
+		},
+		emergencia:{
+			type: mongoose.Schema.ObjectId,
+			ref :"Contato"
 		}
 	});
 
